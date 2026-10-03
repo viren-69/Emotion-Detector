@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Emotion Detector</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f8fc;
+            margin: 0;
+            padding: 0;
+            color: #24344d;
+        }
+
+        header {
+            background-color: #e5f1ff;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        input {
+            width: 90%;
+            padding: 18px;
+            font-size: 17px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 14px 30px;
+            background-color: #1769e0;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0d4eaf;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #eaf7ed;
+            border-radius: 8px;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .error {
+            background-color: #ffe8e8 !important;
+            color: #a00000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Emotion Detector</h1>
+        <p>Analyze emotions in your text using Watson NLP</p>
+    </header>
+
+    <main>
+
+        <form id="emotionForm">
+
+            <input
+                type="text"
+                id="textToAnalyze"
+                placeholder="Enter a sentence to analyze..."
+            >
+
+            <br>
+
+            <button type="submit">
+                Detect Emotion
+            </button>
+
+        </form>
+
+        <div id="result">
+            Your emotion analysis will appear here.
+        </div>
+
+    </main>
+
+    <script>
+
+        document.getElementById("emotionForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const text = document
+                .getElementById("textToAnalyze")
+                .value.trim();
+
+            const result = document.getElementById("result");
+
+            if (!text) {
+                result.className = "error";
+                result.innerText =
+                    "Invalid input! Please enter some text to analyze.";
+                return;
+            }
+
+            result.className = "";
+            result.innerText = "Analyzing...";
+
+            try {
+
+                const response = await fetch(
+                    "/emotionDetector?textToAnalyze=" +
+                    encodeURIComponent(text)
+                );
+
+                const data = await response.text();
+
+                if (!response.ok) {
+                    throw new Error(data);
+                }
+
+                result.innerHTML = data;
+
+            } catch (error) {
+
+                result.className = "error";
+                result.innerText = error.message;
+
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>
